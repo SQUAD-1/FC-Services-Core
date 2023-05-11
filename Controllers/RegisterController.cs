@@ -22,7 +22,6 @@ namespace backend_squad1.Controllers
             int count = Convert.ToInt32(command.ExecuteScalar());
             connection.Close();
 
-            // Se a matrícula já existe, retornar um erro
             if (count > 0)
             {
                 return BadRequest("Usuário já cadastrado");
@@ -33,7 +32,6 @@ namespace backend_squad1.Controllers
                 return BadRequest("Email e senha são obrigatórios");
             }
 
-            // Hashear a senha do usuário
             string hashedPassword;
             using (SHA256 sha256Hash = SHA256.Create())
             {

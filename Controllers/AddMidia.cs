@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using backend_squad1;
 
-namespace MeuProjeto.Controllers
+namespace backend_squad1.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -51,7 +51,6 @@ namespace MeuProjeto.Controllers
 
                 var url = $"https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{Uri.EscapeDataString(filename)}?alt=media";
 
-                // Cria uma instância da classe Midia e preenche suas propriedades
                 var midia = new Midia
                 {
                     TipoMidia = tipoMidia,
@@ -59,7 +58,6 @@ namespace MeuProjeto.Controllers
                     ChamadoIdChamado = chamadoIdChamado
                 };
 
-                // Conecta ao banco de dados e insere a mídia na tabela midia
                 string connectionString = "server=containers-us-west-209.railway.app;port=6938;database=railway;user=root;password=5cu1Y8DVEYLMeej8yleH";
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
