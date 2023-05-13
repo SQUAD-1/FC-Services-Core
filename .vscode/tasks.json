@@ -36,6 +36,15 @@
                 "${workspaceFolder}/backend squad1.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Copy Firebase Credential",
+            "type": "shell",
+            "command": "cp ./Properties/firebase-credential.json ./bin",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
