@@ -50,7 +50,6 @@ namespace backend_squad1.Controllers
                 reader.Close();
                 connection.Close();
 
-                // Hashear a senha fornecida pelo usuário
                 string hashedPasswordInput;
                 using (SHA256 sha256Hash = SHA256.Create())
                 {
@@ -63,10 +62,8 @@ namespace backend_squad1.Controllers
                     hashedPasswordInput = builder.ToString();
                 }
 
-                // Comparar as duas hashes
                 if (hashedPasswordInput == hashedPassword)
                 {
-                    // Gerar o token JWT com as informações do usuário
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var key = Encoding.ASCII.GetBytes("chave-secreta-para-squad1-jwt");
                     var tokenDescriptor = new SecurityTokenDescriptor
@@ -83,7 +80,6 @@ namespace backend_squad1.Controllers
                     var token = tokenHandler.CreateToken(tokenDescriptor);
                     var tokenString = tokenHandler.WriteToken(token);
 
-                    // Adicionar o token na resposta
                     return Ok(new { Matricula = matricula, Nome = nome, Token = tokenString });
                 }
             }
