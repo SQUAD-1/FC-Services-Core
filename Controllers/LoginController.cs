@@ -1,9 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+
 
 namespace backend_squad1.Controllers
 {
@@ -19,53 +23,69 @@ namespace backend_squad1.Controllers
                 return BadRequest("Email e senha são obrigatórios");
             }
 
-            string connectionString = "server=containers-us-west-181.railway.app;port=5947;database=railway;user=root;password=4Fi7NzGpMxBngKKWC1wY";
+            string connectionString = "server=containers-us-west-209.railway.app;port=6938;database=railway;user=root;password=5cu1Y8DVEYLMeej8yleH";
             MySqlConnection connection = new MySqlConnection(connectionString);
             MySqlCommand command = connection.CreateCommand();
 
-            command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE Email = @Email AND Senha = @Senha";
+            command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE Email = @Email";
             command.Parameters.AddWithValue("@Email", login.Email);
-            command.Parameters.AddWithValue("@Senha", login.Senha);
             connection.Open();
             int count = Convert.ToInt32(command.ExecuteScalar());
             connection.Close();
 
             if (count == 1)
             {
-                string token = GerarTokenJWT(login.Email);
-                return Ok(new { token });
-            }
+                command.CommandText = "SELECT Senha, Matricula, Nome FROM Empregado WHERE Email = @Email";
+                connection.Open();
+                MySqlDataReader reader = command.ExecuteReader();
+                string hashedPassword = null;
+                string matricula = null;
+                string nome = null;
+                while (reader.Read())
+                {
+                    hashedPassword = reader["Senha"].ToString();
+                    matricula = reader["Matricula"].ToString();
+                    nome = reader["Nome"].ToString();
+                }
+                reader.Close();
+                connection.Close();
 
+                string hashedPasswordInput;
+                using (SHA256 sha256Hash = SHA256.Create())
+                {
+                    byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(login.Senha));
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < bytes.Length; i++)
+                    {
+                        builder.Append(bytes[i].ToString("x2"));
+                    }
+                    hashedPasswordInput = builder.ToString();
+                }
+
+                if (hashedPasswordInput == hashedPassword)
+                {
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.ASCII.GetBytes("chave-secreta-para-squad1-jwt");
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new Claim[]
+                        {
+                    new Claim(ClaimTypes.Name, matricula),
+                    new Claim(ClaimTypes.Email, login.Email),
+                    new Claim("nome", nome)
+                        }),
+                        Expires = DateTime.UtcNow.AddDays(7),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var tokenString = tokenHandler.WriteToken(token);
+
+                    return Ok(new { Matricula = matricula, Nome = nome, Token = tokenString });
+                }
+            }
             return BadRequest("Usuário ou senha incorretos");
         }
 
-        private string GerarTokenJWT(string email)
-{
-    string chaveSecreta = "minha-chave-secreta-123";
-    var chaveSimetrica = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSecreta));
 
-    // Definir as informações do usuário que serão adicionadas ao token
-    var claims = new[] {
-        new Claim(JwtRegisteredClaimNames.Sub, email),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
-
-    // Definir as configurações do token, incluindo a duração e a chave de assinatura
-    var tokenConfig = new JwtSecurityToken(
-        issuer: "minha-empresa.com",
-        audience: "minha-empresa.com",
-        claims: claims,
-        expires: DateTime.UtcNow.AddHours(1),
-        signingCredentials: new SigningCredentials(chaveSimetrica, SecurityAlgorithms.HmacSha256)
-    );
-
-    // Gerar o token como uma string
-    var tokenHandler = new JwtSecurityTokenHandler();
-    var tokenString = tokenHandler.WriteToken(tokenConfig);
-
-    return tokenString;
-}
     }
-
-
 }

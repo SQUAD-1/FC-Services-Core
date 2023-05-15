@@ -1,65 +1,88 @@
-using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
-
-
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-app.UseCors(options => options
-    .AllowAnyOrigin() // Adicione aqui o endereço do seu aplicativo
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-);
-
-//Endpoint Criação do Chamado
-app.MapPost("/savechamado", (Chamado chamado) =>{
-   ChamadoRepository.Add(product); 
-});
-
-
-app.MapGet("/getchamado/{code}", ([FromRoute] string code) => {
-    var chamado = ChamadoRepository.GetBy(code);
-    return chamado;
-});
-
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace backend_squad1
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-app.UseHttpsRedirection();
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API FC Service", Version = "v1" });
 
-app.UseAuthorization();
+                // Configure Swagger to use JWT Bearer authentication
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                };
+                c.AddSecurityDefinition("Bearer", securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
 
-app.MapControllers();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("chave-secreta-para-squad1-jwt"))
+                    };
+                });
 
-app.Run();
+            var app = builder.Build();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+                c.RoutePrefix = string.Empty;
+            });
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseCors(options => options
+                .AllowAnyOrigin() // Adicione aqui o endereço do seu aplicativo
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
-public class AberturaChamado {
+            app.Run();
 
-    public static List<Chamado> Chamados { get; set; }
-
-    public static void Add(Chamado chamado) {
-        if(Chamados == null)
-            Chamados == new List<Chamado>();
-
-        Chamados.Add(chamado);
+        }
     }
-
-    public AberturaChamado GetBy(string code){
-        return Chamados.First(p => p.Code == code);
-
-    }
 }
-

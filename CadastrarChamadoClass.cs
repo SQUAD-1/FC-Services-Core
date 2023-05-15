@@ -1,8 +1,5 @@
-namespace backend_squad1;
-
-public class ConsultaChamado
+public class Chamado
 {
-    public int idChamado { get; set; }
     public string Nome { get; set; }
     public string DataRelato { get; set; }
     public string Descricao { get; set; }
@@ -13,5 +10,4 @@ public class ConsultaChamado
     public string TempoDecorrido { get; set; }
     public int Empregado_Matricula { get; set; }
     public string Tipo { get; set; }
-
 }
