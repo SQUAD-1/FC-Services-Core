@@ -9,4 +9,5 @@ public class Empregado
     public string Senha { get; set; }
     public int Resolutor { get; set; }
     public int Setor_idSetor { get; set; }
+    public int Filial_idFilial { get; set; }
 }

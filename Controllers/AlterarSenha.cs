@@ -13,7 +13,7 @@ namespace backend_squad1.Controllers
         [HttpPut("{matricula}", Name = "Alterar Senha")]
         public IActionResult PutAlterarSenha(string matricula, [FromBody] AlterarSenhaRequest request)
         {
-            string connectionString = "server=containers-us-west-209.railway.app;port=6938;database=railway;user=root;password=5cu1Y8DVEYLMeej8yleH";
+            string connectionString = "server=gateway01.us-east-1.prod.aws.tidbcloud.com;port=4000;database=mydb;user=2yztCux73sSBMGV.root;password=A857G3OyIUoJOifl";
             MySqlConnection connection = new MySqlConnection(connectionString);
             MySqlCommand command = connection.CreateCommand();
 

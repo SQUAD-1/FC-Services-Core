@@ -8,18 +8,18 @@ namespace backend_squad1.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ConsultaChamadoController : ControllerBase
+    public class ConsultaChamadoIdController : ControllerBase
     {
-        [HttpGet("{matricula}", Name = "GetChamadosByMatricula")]
+        [HttpGet("{idChamado}", Name = "GetChamadosByidChamado")]
         [Authorize]
-        public IActionResult GetAllChamados(int matricula)
+        public IActionResult GetAllChamadosId(int idChamado)
         {
             string connectionString = "server=gateway01.us-east-1.prod.aws.tidbcloud.com;port=4000;database=mydb;user=2yztCux73sSBMGV.root;password=A857G3OyIUoJOifl";
             MySqlConnection connection = new MySqlConnection(connectionString);
             MySqlCommand command = connection.CreateCommand();
 
-            command.CommandText = "SELECT * FROM Chamado WHERE Empregado_Matricula = @Matricula";
-            command.Parameters.AddWithValue("@Matricula", matricula);
+            command.CommandText = "SELECT * FROM Chamado WHERE idChamado = @idChamado";
+            command.Parameters.AddWithValue("@idChamado", idChamado);
             connection.Open();
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -27,7 +27,6 @@ namespace backend_squad1.Controllers
 
             while (reader.Read())
             {
-                int idChamado = reader.GetInt32("idChamado");
                 string nome = reader.GetString("Nome");
                 string dataRelato = reader.GetString("DataRelato");
                 string descricao = reader.GetString("Descricao");

@@ -12,12 +12,14 @@ namespace backend_squad1.Controllers
         [HttpPost(Name = "Adicionar Usuario")]
         public IActionResult PostCadastrarEmpregado([FromBody] Empregado user)
         {
-            string connectionString = "server=containers-us-west-209.railway.app;port=6938;database=railway;user=root;password=5cu1Y8DVEYLMeej8yleH";
+            string connectionString = "server=gateway01.us-east-1.prod.aws.tidbcloud.com;port=4000;database=mydb;user=2yztCux73sSBMGV.root;password=A857G3OyIUoJOifl";
             MySqlConnection connection = new MySqlConnection(connectionString);
             MySqlCommand command = connection.CreateCommand();
 
             command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE Matricula = @Matricula";
             command.Parameters.AddWithValue("@Matricula", user.Matricula);
+            command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE email = @Email";
+            command.Parameters.AddWithValue("@Email", user.Email);
             connection.Open();
             int count = Convert.ToInt32(command.ExecuteScalar());
             connection.Close();
@@ -32,6 +34,18 @@ namespace backend_squad1.Controllers
                 return BadRequest("Email e senha são obrigatórios");
             }
 
+            connection.Open();
+            int count1 = Convert.ToInt32(command.ExecuteScalar());
+            connection.Close();
+            if (count1 > 0)
+            {
+                // Email já cadastrado
+            }
+            else
+            {
+                // Email ainda não cadastrado
+            }
+
             string hashedPassword;
             using (SHA256 sha256Hash = SHA256.Create())
             {
@@ -44,7 +58,7 @@ namespace backend_squad1.Controllers
                 hashedPassword = builder.ToString();
             }
 
-            command.CommandText = "INSERT INTO Empregado (Matricula, Nome, Funcao, Email, Senha, Resolutor, Setor_idSetor) VALUES (@Matricula, @Nome, @Funcao, @Email, @Senha, @Resolutor, @Setor_idSetor)";
+            command.CommandText = "INSERT INTO Empregado (Matricula, Nome, Funcao, Email, Senha, Resolutor, Setor_idSetor, Filial_idFilial) VALUES (@Matricula, @Nome, @Funcao, @Email, @Senha, @Resolutor, @Setor_idSetor, @Filial_idFilial)";
             command.Parameters.Clear();
             command.Parameters.AddWithValue("@Matricula", user.Matricula);
             command.Parameters.AddWithValue("@Nome", user.Nome);
@@ -53,6 +67,7 @@ namespace backend_squad1.Controllers
             command.Parameters.AddWithValue("@Senha", hashedPassword);
             command.Parameters.AddWithValue("@Resolutor", user.Resolutor);
             command.Parameters.AddWithValue("@Setor_idSetor", user.Setor_idSetor);
+            command.Parameters.AddWithValue("@Filial_idFilial", user.Filial_idFilial);
 
             connection.Open();
             command.ExecuteNonQuery();
