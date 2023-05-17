@@ -9,17 +9,9 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = backend_squad1
 build_property.RootNamespace = backend_squad1
-<<<<<<< HEAD
-build_property.ProjectDir = c:\Users\alisson.assuncao\Desktop\FC-Services-Core\
+build_property.ProjectDir = C:\Users\alisson.assuncao\Desktop\FC-Services-Core\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = c:\Users\alisson.assuncao\Desktop\FC-Services-Core
-=======
-build_property.ProjectDir = C:\Repositório\FC-Services-Core\FC-Services-Core\
-build_property.RazorLangVersion = 6.0
-build_property.SupportLocalizedComponentNames = 
-build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Repositório\FC-Services-Core\FC-Services-Core
->>>>>>> 2bd6e5bb0797b0f4ab5445e5c3a2b92e44594d00
+build_property.MSBuildProjectDirectory = C:\Users\alisson.assuncao\Desktop\FC-Services-Core
 build_property._RazorSourceGeneratorDebug = 
