@@ -2,10 +2,11 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Authorization;
-
+using System.Collections.Generic;
 
 namespace backend_squad1.Controllers
 {
+   
     [ApiController]
     [Route("[controller]")]
     public class ConsultaChamadoIdController : ControllerBase
@@ -18,7 +19,7 @@ namespace backend_squad1.Controllers
             MySqlConnection connection = new MySqlConnection(connectionString);
             MySqlCommand command = connection.CreateCommand();
 
-            command.CommandText = "SELECT * FROM Chamado WHERE idChamado = @idChamado";
+            command.CommandText = "SELECT c.*, m.idMidia, m.linkMidia, m.tipoMidia FROM Chamado c LEFT JOIN Midia m ON c.idChamado = m.Chamado_idChamado WHERE c.idChamado = @idChamado";
             command.Parameters.AddWithValue("@idChamado", idChamado);
             connection.Open();
             MySqlDataReader reader = command.ExecuteReader();
@@ -27,6 +28,7 @@ namespace backend_squad1.Controllers
 
             while (reader.Read())
             {
+                int chamadoId = reader.GetInt32("idChamado");
                 string nome = reader.GetString("Nome");
                 string dataRelato = reader.GetString("DataRelato");
                 string descricao = reader.GetString("Descricao");
@@ -37,23 +39,37 @@ namespace backend_squad1.Controllers
                 string tempoDecorrido = reader.GetString("TempoDecorrido");
                 int empregado_Matricula = reader.GetInt32("Empregado_Matricula");
                 string tipo = reader.GetString("Tipo");
+                int idMidia = reader.IsDBNull(reader.GetOrdinal("idMidia")) ? 0 : reader.GetInt32("idMidia");
+                string linkMidia = reader.IsDBNull(reader.GetOrdinal("linkMidia")) ? null : reader.GetString("linkMidia");
+                string tipoMidia = reader.IsDBNull(reader.GetOrdinal("tipoMidia")) ? null : reader.GetString("tipoMidia");
 
-                ConsultaChamado chamado = new ConsultaChamado
+                ConsultaChamado chamado = chamados.Find(c => c.idChamado == chamadoId);
+
+                if (chamado == null)
                 {
-                    idChamado = idChamado,
-                    Nome = nome,
-                    DataRelato = dataRelato,
-                    Descricao = descricao,
-                    Prioridade = prioridade,
-                    HorarioAbertura = horarioAbertura,
-                    HorarioUltimaAtualizacao = horarioUltimaAtualizacao,
-                    Status = status,
-                    TempoDecorrido = tempoDecorrido,
-                    Empregado_Matricula = empregado_Matricula,
-                    Tipo = tipo,
-                };
+                    chamado = new ConsultaChamado
+                    {
+                        idChamado = chamadoId,
+                        Nome = nome,
+                        DataRelato = dataRelato,
+                        Descricao = descricao,
+                        Prioridade = prioridade,
+                        HorarioAbertura = horarioAbertura,
+                        HorarioUltimaAtualizacao = horarioUltimaAtualizacao,
+                        Status = status,
+                        TempoDecorrido = tempoDecorrido,
+                        Empregado_Matricula = empregado_Matricula,
+                        Tipo = tipo,
+                        LinkMidia = new List<LinkMidia>()
+                    };
 
-                chamados.Add(chamado);
+                    chamados.Add(chamado);
+                }
+
+                if (!string.IsNullOrEmpty(linkMidia))
+                {
+                    chamado.LinkMidia.Add(new LinkMidia { IdMidia = idMidia, Link = linkMidia, TipoMidia = tipoMidia });
+                }
             }
 
             return Ok(chamados);
