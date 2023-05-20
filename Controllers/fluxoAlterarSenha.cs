@@ -15,8 +15,8 @@ namespace backend_squad1.Controllers
         private const string emailFrom = "pixelsquadfcx@outlook.com";
         private const string emailPassword = "pixelsquad1";
 
-        [HttpGet("verificar-usuario/{matricula}", Name = "Verificar Usuário")]
-        public IActionResult VerificarUsuario(string matricula)
+        [HttpGet("verificar-usuario/{matricula}", Name = "Verificar Usuário Matricula")]
+        public IActionResult VerificarUsuarioMatricula(string matricula)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -34,7 +34,34 @@ namespace backend_squad1.Controllers
             return Ok("Usuário encontrado");
         }
 
-        [HttpGet("verificar-email/{matricula}/{email}", Name = "Verificar E-mail")]
+
+        [HttpGet("verificar-usuario/{matricula}/{email}", Name = "Verificar Usuário Email")]
+        public IActionResult VerificarUsuarioEmail(string matricula, string email)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                MySqlCommand command = connection.CreateCommand();
+                command.CommandText = "SELECT Email FROM Empregado WHERE Matricula = @Matricula";
+                command.Parameters.AddWithValue("@Matricula", matricula);
+                connection.Open();
+                object result = command.ExecuteScalar();
+                if (result == null)
+                {
+                    return NotFound("Usuário não encontrado");
+                }
+
+                string emailNoBanco = result.ToString();
+                if (email == emailNoBanco)
+                {
+                    return BadRequest("O email fornecido é igual ao email registrado no banco de dados");
+                }
+            }
+
+            return Ok("Usuário encontrado");
+        }
+
+
+        [HttpGet("enviar-codigo/{matricula}/{email}", Name = "Verificar E-mail")]
         public IActionResult VerificarEmail(string matricula, string email)
         {
             if (string.IsNullOrEmpty(email))
@@ -66,6 +93,24 @@ namespace backend_squad1.Controllers
             AtualizarCodigoRecuperacao(matricula, codigoRecuperacao);
 
             return Ok("Email com código de recuperação enviado");
+        }
+
+        [HttpGet("verificar-codigo/{matricula}/{codigo}", Name = "Verificar Código")]
+        public IActionResult VerificarCodigo(string matricula, string codigo)
+        {
+            string codigoRecuperacao = ObterCodigoRecuperacao(matricula);
+
+            if (codigoRecuperacao == null)
+            {
+                return BadRequest("Matrícula inválida ou código de recuperação não encontrado");
+            }
+
+            if (codigoRecuperacao != codigo)
+            {
+                return BadRequest("Código de recuperação incorreto");
+            }
+
+            return Ok("Código de recuperação válido");
         }
 
         [HttpPut("alterar-senha/{matricula}", Name = "Alterar Senha")]
