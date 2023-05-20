@@ -12,7 +12,6 @@ namespace backend_squad1.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    
     public class AddMidiaController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;

@@ -254,3 +254,8 @@ C:\Repositório\FC-Services-Core\FC-Services-Core\obj\Debug\net6.0\refint\backen
 C:\Repositório\FC-Services-Core\FC-Services-Core\obj\Debug\net6.0\backend squad1.pdb
 C:\Repositório\FC-Services-Core\FC-Services-Core\obj\Debug\net6.0\backend squad1.genruntimeconfig.cache
 C:\Repositório\FC-Services-Core\FC-Services-Core\obj\Debug\net6.0\ref\backend squad1.dll
+C:\Users\alisson.assuncao\Desktop\FC-Services-Core\bin\Debug\net6.0\BouncyCastle.Cryptography.dll
+C:\Users\alisson.assuncao\Desktop\FC-Services-Core\bin\Debug\net6.0\Google.Apis.Gmail.v1.dll
+C:\Users\alisson.assuncao\Desktop\FC-Services-Core\bin\Debug\net6.0\MimeKit.dll
+C:\Users\alisson.assuncao\Desktop\FC-Services-Core\bin\Debug\net6.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\alisson.assuncao\Desktop\FC-Services-Core\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
