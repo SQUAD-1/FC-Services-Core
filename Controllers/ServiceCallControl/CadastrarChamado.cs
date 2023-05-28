@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using backend_squad1.Models;
 using backend_squad1.Services;
+using backend_squad1.DataModels;
+
 
 namespace backend_squad1.Controllers
 {
@@ -16,7 +18,7 @@ namespace backend_squad1.Controllers
         }
 
         [HttpPost]
-        public IActionResult CadastrarChamado(CadastrarChamado chamado)
+        public IActionResult CadastrarChamado(ServiceCall chamado)
         {
             try
             {

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using backend_squad1.DataModels;
+
 
 namespace backend_squad1.Controllers
 {

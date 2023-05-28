@@ -1,7 +1,7 @@
 using System;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
-
+using backend_squad1.DataModels;
 
 namespace backend_squad1.Services
 {
@@ -14,7 +14,7 @@ namespace backend_squad1.Services
             _databaseConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public int CadastrarChamado(CadastrarChamado chamado)
+        public int CadastrarChamado(ServiceCall chamado)
         {
             MySqlConnection connection = new MySqlConnection(_databaseConnectionString);
             MySqlCommand command = connection.CreateCommand();
