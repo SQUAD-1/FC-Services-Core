@@ -1,4 +1,4 @@
-namespace backend_squad1;
+namespace backend_squad1.DataModels;
 
 public class Empregado
 {

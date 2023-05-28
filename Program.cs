@@ -21,6 +21,7 @@ namespace backend_squad1
             builder.Services.AddScoped<LoginService>();
             builder.Services.AddScoped<AddMidiaService>();
             builder.Services.AddScoped<RemoveMidiaService>();
+            builder.Services.AddScoped<ICadastrarUsuarioService, CadastrarUsuarioService>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
