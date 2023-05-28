@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace backend_squad1.Controllers
 {
     [ApiController]
@@ -29,7 +28,7 @@ namespace backend_squad1.Controllers
             {
                 int idChamado = reader.GetInt32("idChamado");
                 string nome = reader.GetString("Nome");
-                string dataRelato = reader.GetString("DataRelato");
+                DateTime dataRelato = reader.GetDateTime("DataRelato");
                 string descricao = reader.GetString("Descricao");
                 string prioridade = reader.GetString("Prioridade");
                 string horarioAbertura = reader.GetString("HorarioAbertura");
@@ -43,7 +42,7 @@ namespace backend_squad1.Controllers
                 {
                     idChamado = idChamado,
                     Nome = nome,
-                    DataRelato = dataRelato,
+                    DataRelato = dataRelato.ToString("dd/MM/yyyy"),
                     Descricao = descricao,
                     Prioridade = prioridade,
                     HorarioAbertura = horarioAbertura,

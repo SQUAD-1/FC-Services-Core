@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace backend_squad1.Controllers
 {
-   
     [ApiController]
     [Route("[controller]")]
     public class ConsultaChamadoIdController : ControllerBase
@@ -30,7 +29,7 @@ namespace backend_squad1.Controllers
             {
                 int chamadoId = reader.GetInt32("idChamado");
                 string nome = reader.GetString("Nome");
-                string dataRelato = reader.GetString("DataRelato");
+                DateTime dataRelato = reader.GetDateTime("DataRelato");
                 string descricao = reader.GetString("Descricao");
                 string prioridade = reader.GetString("Prioridade");
                 string horarioAbertura = reader.GetString("HorarioAbertura");
@@ -51,7 +50,7 @@ namespace backend_squad1.Controllers
                     {
                         idChamado = chamadoId,
                         Nome = nome,
-                        DataRelato = dataRelato,
+                        DataRelato = dataRelato.ToString("dd/MM/yyyy"),
                         Descricao = descricao,
                         Prioridade = prioridade,
                         HorarioAbertura = horarioAbertura,
