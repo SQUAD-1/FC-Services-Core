@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace backend_squad1
+namespace backend_squad1.DataModels
 {
     public class Midia
     {
