@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Repositório\\FC-Services-Core\\FC-Services-Core\\backend squad1.csproj": {}
+    "C:\\Repositório\\FC-Services-Core\\backend squad1.csproj": {}
   },
   "projects": {
-    "C:\\Repositório\\FC-Services-Core\\FC-Services-Core\\backend squad1.csproj": {
+    "C:\\Repositório\\FC-Services-Core\\backend squad1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Repositório\\FC-Services-Core\\FC-Services-Core\\backend squad1.csproj",
+        "projectUniqueName": "C:\\Repositório\\FC-Services-Core\\backend squad1.csproj",
         "projectName": "backend squad1",
-        "projectPath": "C:\\Repositório\\FC-Services-Core\\FC-Services-Core\\backend squad1.csproj",
+        "projectPath": "C:\\Repositório\\FC-Services-Core\\backend squad1.csproj",
         "packagesPath": "C:\\Users\\Marcos\\.nuget\\packages\\",
-        "outputPath": "C:\\Repositório\\FC-Services-Core\\FC-Services-Core\\obj\\",
+        "outputPath": "C:\\Repositório\\FC-Services-Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Marcos\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,9 +40,17 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.123, )"
+            },
             "FirebaseAdmin": {
               "target": "Package",
               "version": "[2.3.0, )"
+            },
+            "Google.Apis.Gmail.v1": {
+              "target": "Package",
+              "version": "[1.60.0.3056, )"
             },
             "Google.Cloud.Storage.V1": {
               "target": "Package",
@@ -55,6 +63,10 @@
             "Microsoft.AspNetCore.Cors": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "MimeKit": {
+              "target": "Package",
+              "version": "[4.0.0, )"
             },
             "MySql.Data": {
               "target": "Package",

@@ -29,7 +29,7 @@ namespace backend_squad1.Controllers
         {
             try
             {
-                string connectionString = "server=containers-us-west-209.railway.app;port=6938;database=railway;user=root;password=5cu1Y8DVEYLMeej8yleH";
+            string connectionString = "server=gateway01.us-east-1.prod.aws.tidbcloud.com;port=4000;database=mydb;user=2yztCux73sSBMGV.root;password=A857G3OyIUoJOifl";
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();

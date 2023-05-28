@@ -4,95 +4,92 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Authorization;
+using backend_squad1.Models;
+using backend_squad1.Constants.Sql;
+using backend_squad1.Data;
+using backend_squad1.Models.Inputs;
 
-namespace FC_Services_Core.Controllers
+namespace fc_services_core.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class FiltrarChamadosController : ControllerBase
     {
+        private readonly IAppDbConnection db;
+
+        public FiltrarChamadosController(IAppDbConnection db)
+        {
+            this.db = db;
+        }
+
         [HttpPost]
         [Authorize]
         public IActionResult FiltrarChamados(FiltroChamados filtro)
         {
-            string connectionString = "server=containers-us-west-209.railway.app;port=6938;database=railway;user=root;password=5cu1Y8DVEYLMeej8yleH";
-            MySqlConnection connection = new MySqlConnection(connectionString);
-            MySqlCommand command = connection.CreateCommand();
-
-            string query = "SELECT * FROM Chamado WHERE ";
-
-            List<MySqlParameter> parameters = new List<MySqlParameter>();
-
-            if (filtro.DataRelato != null)
+            try
             {
-                query += "DataRelato = @DataRelato AND ";
-                parameters.Add(new MySqlParameter("@DataRelato", filtro.DataRelato));
-            }
+                this.db.Open();
 
-            if (filtro.Prioridade != null)
-            {
-                query += "Prioridade = @Prioridade AND ";
-                parameters.Add(new MySqlParameter("@Prioridade", filtro.Prioridade));
-            }
+                string query = "SELECT * FROM chamado WHERE ";
 
-            if (filtro.Status != null)
-            {
-                query += "Status = @Status AND ";
-                parameters.Add(new MySqlParameter("@Status", filtro.Status));
-            }
+                List<MySqlParameter> parameters = new List<MySqlParameter>();
 
-            if (filtro.TempoDecorrido != null)
-            {
-                query += "TempoDecorrido = @TempoDecorrido AND ";
-                parameters.Add(new MySqlParameter("@TempoDecorrido", filtro.TempoDecorrido));
-            }
-
-            if (filtro.Empregado_Matricula != null)
-            {
-                query += "Empregado_Matricula = @Empregado_Matricula AND ";
-                parameters.Add(new MySqlParameter("@Empregado_Matricula", filtro.Empregado_Matricula));
-            }
-
-            if (filtro.Tipo != null)
-            {
-                query += "Tipo = @Tipo AND ";
-                parameters.Add(new MySqlParameter("@Tipo", filtro.Tipo));
-            }
-
-            // Remove o último "AND" da consulta
-            query = query.TrimEnd(' ', 'A', 'N', 'D');
-
-            command.CommandText = query;
-            command.Parameters.AddRange(parameters.ToArray());
-
-            connection.Open();
-
-            MySqlDataReader reader = command.ExecuteReader();
-
-            List<Chamado> chamados = new List<Chamado>();
-
-            while (reader.Read())
-            {
-                Chamado chamado = new Chamado
+                if (filtro.DataRelato != null)
                 {
-                    Nome = reader["Nome"].ToString(),
-                    DataRelato = reader["DataRelato"].ToString(),
-                    Descricao = reader["Descricao"].ToString(),
-                    Prioridade = reader["Prioridade"].ToString(),
-                    HorarioAbertura = reader["HorarioAbertura"].ToString(),
-                    HorarioUltimaAtualizacao = reader["HorarioUltimaAtualizacao"].ToString(),
-                    Status = reader["Status"].ToString(),
-                    TempoDecorrido = reader["TempoDecorrido"].ToString(),
-                    Empregado_Matricula = Convert.ToInt32(reader["Empregado_Matricula"]),
-                    Tipo = reader["Tipo"].ToString()
-                };
+                    query += "datarelato = @datarelato AND ";
+                    parameters.Add(new MySqlParameter("@datarelato", filtro.DataRelato));
+                }
 
-                chamados.Add(chamado);
+                if (filtro.Prioridade != null)
+                {
+                    query += "prioridade = @prioridade AND ";
+                    parameters.Add(new MySqlParameter("@prioridade", filtro.Prioridade));
+                }
+
+                if (filtro.Status != null)
+                {
+                    query += "status = @status AND ";
+                    parameters.Add(new MySqlParameter("@status", filtro.Status));
+                }
+
+                if (filtro.TempoDecorrido != null)
+                {
+                    query += "tempodecorrido = @tempodecorrido AND ";
+                    parameters.Add(new MySqlParameter("@tempodecorrido", filtro.TempoDecorrido));
+                }
+
+                if (filtro.Empregado_Matricula != null)
+                {
+                    query += "empregado_matricula = @empregado_matricula AND ";
+                    parameters.Add(new MySqlParameter("@empregado_matricula", filtro.Empregado_Matricula));
+                }
+
+                if (filtro.Tipo != null)
+                {
+                    query += "tipo = @tipo AND ";
+                    parameters.Add(new MySqlParameter("@tipo", filtro.Tipo));
+                }
+
+                // Remove o último "AND" da consulta
+                query = query.TrimEnd(' ', 'A', 'N', 'D');
+
+                var chamados = this.db.Query<ConsultaChamadoID>(new AppDbModels.Query
+                {
+                    QuerySql = query,
+                    Parameters = parameters.ToArray()
+                });
+
+                return Ok(chamados);
             }
-
-            connection.Close();
-
-            return Ok(chamados);
+            catch (Exception error)
+            {
+                Console.WriteLine(error.Message);
+                return BadRequest();
+            }
+            finally
+            {
+                this.db.Close();
+            }
         }
     }
 }
