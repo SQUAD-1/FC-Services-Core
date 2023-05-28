@@ -15,7 +15,7 @@ namespace backend_squad1.Controllers
         private const string emailFrom = "pixelsquadfcx@outlook.com";
         private const string emailPassword = "pixelsquad1";
 
-        [HttpGet("verificar-usuario/{matricula}", Name = "Verificar Usuário Matricula")]
+        [HttpGet("verificar-usuario-matricula/{matricula}", Name = "Verificar Usuário Matricula")]
         public IActionResult VerificarUsuarioMatricula(string matricula)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -35,7 +35,7 @@ namespace backend_squad1.Controllers
         }
 
 
-        [HttpGet("verificar-usuario/{matricula}/{email}", Name = "Verificar Usuário Email")]
+        [HttpGet("verificar-usuario-email/{matricula}/{email}", Name = "Verificar Usuário Email")]
         public IActionResult VerificarUsuarioEmail(string matricula, string email)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -53,11 +53,11 @@ namespace backend_squad1.Controllers
                 string emailNoBanco = result.ToString();
                 if (email == emailNoBanco)
                 {
-                    return BadRequest("O email fornecido é igual ao email registrado no banco de dados");
+                    return Ok("Usuário encontrado");
                 }
             }
 
-            return Ok("Usuário encontrado");
+            return BadRequest("O email fornecido é diferente do email registrado no banco de dados");
         }
 
 
