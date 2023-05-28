@@ -16,7 +16,10 @@ namespace backend_squad1
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "fc-services-ba67f-firebase-adminsdk-nytje-1959376e26.json");
+
             builder.Services.AddScoped<LoginService>();
+            builder.Services.AddScoped<AddMidiaService>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
