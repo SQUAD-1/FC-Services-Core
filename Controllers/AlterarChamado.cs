@@ -1,8 +1,8 @@
-using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Authorization;
+using backend_squad1.Models;
 
 namespace backend_squad1.Controllers
 {
