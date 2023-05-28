@@ -8,6 +8,8 @@ using backend_squad1.Models;
 using backend_squad1.Constants.Sql;
 using backend_squad1.Data;
 using backend_squad1.Models.Inputs;
+using backend_squad1.Data.Models;
+using backend_squad1.Extensions;
 
 namespace fc_services_core.Controllers
 {
@@ -73,11 +75,7 @@ namespace fc_services_core.Controllers
                 // Remove o último "AND" da consulta
                 query = query.TrimEnd(' ', 'A', 'N', 'D');
 
-                var chamados = this.db.Query<ConsultaChamadoID>(new AppDbModels.Query
-                {
-                    QuerySql = query,
-                    Parameters = parameters.ToArray()
-                });
+                var chamados = this.db.Query<ConsultaChamadoID>(query, parameters);
 
                 return Ok(chamados);
             }
