@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using System.Security.Cryptography;
 using System.Text;
+using backend_squad1.Models;
 
 namespace backend_squad1.Controllers
 {

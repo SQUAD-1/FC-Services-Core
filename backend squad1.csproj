@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>backend_squad1</RootNamespace>
+    <UserSecretsId>13e3c620-c4a6-4a6c-9b17-2cd2b7a98dd3</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.60.0.3056" />
     <PackageReference Include="Google.Cloud.Storage.V1" Version="4.5.0" />
