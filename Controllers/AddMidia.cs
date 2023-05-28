@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using backend_squad1.Services;
 
 namespace backend_squad1.Controllers
@@ -13,11 +14,13 @@ namespace backend_squad1.Controllers
     {
         private readonly IWebHostEnvironment _env;
         private readonly AddMidiaService _addMidiaService;
+        private readonly IConfiguration _configuration;
 
-        public AddMidiaController(IWebHostEnvironment env, AddMidiaService addMidiaService)
+        public AddMidiaController(IWebHostEnvironment env, AddMidiaService addMidiaService, IConfiguration configuration)
         {
             _env = env;
             _addMidiaService = addMidiaService;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -32,7 +35,7 @@ namespace backend_squad1.Controllers
 
                 string googleCredentialsPath = "fc-services-ba67f-firebase-adminsdk-nytje-1959376e26.json";
                 string bucketName = "fc-services-ba67f.appspot.com";
-                string databaseConnectionString = "server=gateway01.us-east-1.prod.aws.tidbcloud.com;port=4000;database=mydb;user=2yztCux73sSBMGV.root;password=A857G3OyIUoJOifl";
+                string databaseConnectionString = _configuration.GetConnectionString("DefaultConnection");
 
                 var urls = await _addMidiaService.UploadMedia(files, chamadoIdChamado, googleCredentialsPath, bucketName, databaseConnectionString);
 
