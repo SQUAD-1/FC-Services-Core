@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System;
 using System.Security.Claims;
@@ -7,15 +8,20 @@ using Microsoft.IdentityModel.Tokens;
 using backend_squad1.Models;
 using System.IdentityModel.Tokens.Jwt;
 
-
 namespace backend_squad1.Services
 {
     public class LoginService
     {
+        private readonly string _databaseConnectionString;
+
+        public LoginService(IConfiguration configuration)
+        {
+            _databaseConnectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+
         public LoginResult Authenticate(string email, string senha)
         {
-            string connectionString = "server=gateway01.us-east-1.prod.aws.tidbcloud.com;port=4000;database=mydb;user=2yztCux73sSBMGV.root;password=A857G3OyIUoJOifl";
-            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlConnection connection = new MySqlConnection(_databaseConnectionString);
             MySqlCommand command = connection.CreateCommand();
 
             command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE Email = @Email";
