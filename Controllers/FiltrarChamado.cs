@@ -1,98 +1,89 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Globalization;
-// using Microsoft.AspNetCore.Mvc;
-// using MySql.Data.MySqlClient;
-// using Microsoft.AspNetCore.Authorization;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
+using MySql.Data.MySqlClient;
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
-// namespace FC_Services_Core.Controllers
-// {
-//     [ApiController]
-//     [Route("[controller]")]
-//     public class FiltrarChamadosController : ControllerBase
-//     {
-//         [HttpPost]
-//         [Authorize]
-//         public IActionResult FiltrarChamados(FiltroChamados filtro)
-//         {
-//             string connectionString = "server=containers-us-west-209.railway.app;port=6938;database=railway;user=root;password=5cu1Y8DVEYLMeej8yleH";
-//             MySqlConnection connection = new MySqlConnection(connectionString);
-//             MySqlCommand command = connection.CreateCommand();
+namespace backend_squad1.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class FiltroChamadoController : ControllerBase
+    {
+        [HttpGet]
+        [Authorize]
+        public IActionResult GetChamadosPorFiltro(int matricula, string? nome)
+        {
+            if (string.IsNullOrEmpty(nome))
+            {
+                nome = null;
+            }
+            
+            string connectionString = "server=gateway01.us-east-1.prod.aws.tidbcloud.com;port=4000;database=mydb;user=2yztCux73sSBMGV.root;password=A857G3OyIUoJOifl";
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = connection.CreateCommand();
 
-//             string query = "SELECT * FROM Chamado WHERE ";
+            string query = "SELECT c.*, m.idMidia, m.linkMidia, m.tipoMidia FROM Chamado c LEFT JOIN Midia m ON c.idChamado = m.Chamado_idChamado WHERE c.Empregado_Matricula = @matricula";
+            if (!string.IsNullOrEmpty(nome))
+            {
+                query += " AND c.Nome LIKE @nome";
+                command.Parameters.AddWithValue("@nome", "%" + nome + "%");
+            }
+            command.Parameters.AddWithValue("@matricula", matricula);
+            command.CommandText = query;
 
-//             List<MySqlParameter> parameters = new List<MySqlParameter>();
+            connection.Open();
+            MySqlDataReader reader = command.ExecuteReader();
 
-//             if (filtro.DataRelato != null)
-//             {
-//                 query += "DataRelato = @DataRelato AND ";
-//                 parameters.Add(new MySqlParameter("@DataRelato", filtro.DataRelato));
-//             }
+            List<ConsultaChamado> chamados = new List<ConsultaChamado>();
 
-//             if (filtro.Prioridade != null)
-//             {
-//                 query += "Prioridade = @Prioridade AND ";
-//                 parameters.Add(new MySqlParameter("@Prioridade", filtro.Prioridade));
-//             }
+            while (reader.Read())
+            {
+                int chamadoId = reader.GetInt32("idChamado");
+                string chamadoNome = reader.GetString("Nome");
+                DateTime dataRelato = reader.GetDateTime("DataRelato");
+                string descricao = reader.GetString("Descricao");
+                string prioridade = reader.GetString("Prioridade");
+                string horarioAbertura = reader.GetString("HorarioAbertura");
+                string horarioUltimaAtualizacao = reader.GetString("horarioUltimaAtualizacao");
+                string status = reader.GetString("Status");
+                string tempoDecorrido = reader.GetString("TempoDecorrido");
+                int empregado_Matricula = reader.GetInt32("Empregado_Matricula");
+                string tipo = reader.GetString("Tipo");
+                int idMidia = reader.IsDBNull(reader.GetOrdinal("idMidia")) ? 0 : reader.GetInt32("idMidia");
+                string linkMidia = reader.IsDBNull(reader.GetOrdinal("linkMidia")) ? null : reader.GetString("linkMidia");
+                string tipoMidia = reader.IsDBNull(reader.GetOrdinal("tipoMidia")) ? null : reader.GetString("tipoMidia");
 
-//             if (filtro.Status != null)
-//             {
-//                 query += "Status = @Status AND ";
-//                 parameters.Add(new MySqlParameter("@Status", filtro.Status));
-//             }
+                ConsultaChamado chamado = chamados.Find(c => c.idChamado == chamadoId);
 
-//             if (filtro.TempoDecorrido != null)
-//             {
-//                 query += "TempoDecorrido = @TempoDecorrido AND ";
-//                 parameters.Add(new MySqlParameter("@TempoDecorrido", filtro.TempoDecorrido));
-//             }
+                if (chamado == null)
+                {
+                    chamado = new ConsultaChamado
+                    {
+                        idChamado = chamadoId,
+                        Nome = chamadoNome,
+                        DataRelato = dataRelato.ToString("dd/MM/yyyy"),
+                        Descricao = descricao,
+                        Prioridade = prioridade,
+                        HorarioAbertura = horarioAbertura,
+                        HorarioUltimaAtualizacao = horarioUltimaAtualizacao,
+                        Status = status,
+                        TempoDecorrido = tempoDecorrido,
+                        Empregado_Matricula = empregado_Matricula,
+                        Tipo = tipo,
+                        LinkMidia = new List<LinkMidia>()
+                    };
 
-//             if (filtro.Empregado_Matricula != null)
-//             {
-//                 query += "Empregado_Matricula = @Empregado_Matricula AND ";
-//                 parameters.Add(new MySqlParameter("@Empregado_Matricula", filtro.Empregado_Matricula));
-//             }
+                    chamados.Add(chamado);
+                }
 
-//             if (filtro.Tipo != null)
-//             {
-//                 query += "Tipo = @Tipo AND ";
-//                 parameters.Add(new MySqlParameter("@Tipo", filtro.Tipo));
-//             }
+                if (!string.IsNullOrEmpty(linkMidia))
+                {
+                    chamado.LinkMidia.Add(new LinkMidia { IdMidia = idMidia, Link = linkMidia, TipoMidia = tipoMidia });
+                }
+            }
 
-//             // Remove o último "AND" da consulta
-//             query = query.TrimEnd(' ', 'A', 'N', 'D');
-
-//             command.CommandText = query;
-//             command.Parameters.AddRange(parameters.ToArray());
-
-//             connection.Open();
-
-//             MySqlDataReader reader = command.ExecuteReader();
-
-//             List<Chamado> chamados = new List<Chamado>();
-
-//             while (reader.Read())
-//             {
-//                 Chamado chamado = new Chamado
-//                 {
-//                     Nome = reader["Nome"].ToString(),
-//                     DataRelato = reader["DataRelato"].ToString(),
-//                     Descricao = reader["Descricao"].ToString(),
-//                     Prioridade = reader["Prioridade"].ToString(),
-//                     HorarioAbertura = reader["HorarioAbertura"].ToString(),
-//                     HorarioUltimaAtualizacao = reader["HorarioUltimaAtualizacao"].ToString(),
-//                     Status = reader["Status"].ToString(),
-//                     TempoDecorrido = reader["TempoDecorrido"].ToString(),
-//                     Empregado_Matricula = Convert.ToInt32(reader["Empregado_Matricula"]),
-//                     Tipo = reader["Tipo"].ToString()
-//                 };
-
-//                 chamados.Add(chamado);
-//             }
-
-//             connection.Close();
-
-//             return Ok(chamados);
-//         }
-//     }
-// }
+            return Ok(chamados);
+        }
+    }
+}
