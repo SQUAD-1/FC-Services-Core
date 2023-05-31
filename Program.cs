@@ -25,6 +25,7 @@ namespace backend_squad1
             builder.Services.AddScoped<CadastroChamadoService>();
             builder.Services.AddScoped<ConsultaChamadoService>();
             builder.Services.AddScoped<ConsultaChamadoIdService>();
+            builder.Services.AddScoped<FiltrarChamadosService>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>

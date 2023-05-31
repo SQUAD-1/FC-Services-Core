@@ -4,7 +4,8 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-
+using System.Security.Cryptography;
+using System.Text;
 namespace backend_squad1.Controllers
 {
     [Route("[controller]")]
@@ -236,14 +237,31 @@ namespace backend_squad1.Controllers
 
             return null;
         }
+        private string hashearSenha(string senha)
+        {
+            string hashedPassword;
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(senha));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                hashedPassword = builder.ToString();
+            }
+
+            return hashedPassword;
+        }
 
         private void AlterarSenhaNoBancoDeDados(string matricula, string novaSenha)
-        {
+        {   
+            
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 MySqlCommand command = connection.CreateCommand();
                 command.CommandText = "UPDATE Empregado SET Senha = @Senha WHERE Matricula = @Matricula";
-                command.Parameters.AddWithValue("@Senha", novaSenha);
+                command.Parameters.AddWithValue("@Senha", hashearSenha(novaSenha));
                 command.Parameters.AddWithValue("@Matricula", matricula);
                 connection.Open();
                 command.ExecuteNonQuery();
