@@ -5,7 +5,6 @@ using System.Text;
 using backend_squad1.DataModels;
 using backend_squad1.Models;
 
-
 namespace backend_squad1.Services
 {
     public interface ICadastrarUsuarioService
@@ -29,20 +28,34 @@ namespace backend_squad1.Services
 
             command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE Matricula = @Matricula";
             command.Parameters.AddWithValue("@Matricula", user.Matricula);
-            command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE email = @Email";
-            command.Parameters.AddWithValue("@Email", user.Email);
             connection.Open();
-            int count = Convert.ToInt32(command.ExecuteScalar());
+            int matriculaCount = Convert.ToInt32(command.ExecuteScalar());
             connection.Close();
 
-            if (count > 0)
+            command.CommandText = "SELECT COUNT(*) FROM Empregado WHERE Email = @Email";
+            command.Parameters.AddWithValue("@Email", user.Email);
+            connection.Open();
+            int emailCount = Convert.ToInt32(command.ExecuteScalar());
+            connection.Close();
+
+            if (emailCount > 0 && matriculaCount > 0)
             {
-                return ServiceResult.Failure("Usuário já cadastrado");
+                return ServiceResult.Failure("O email e a matrícula já estão cadastrados.");
+            }
+
+            if (emailCount > 0)
+            {
+                return ServiceResult.Failure("O email já está cadastrado.");
+            }
+
+            if (matriculaCount > 0)
+            {
+                return ServiceResult.Failure("A matrícula já está cadastrada.");
             }
 
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Senha))
             {
-                return ServiceResult.Failure("Email e senha são obrigatórios");
+                return ServiceResult.Failure("O email e a senha são obrigatórios.");
             }
 
             string hashedPassword;
@@ -76,4 +89,3 @@ namespace backend_squad1.Services
         }
     }
 }
-
