@@ -14,5 +14,7 @@ namespace backend_squad1.DataModels
         public int Empregado_Matricula { get; set; }
         public string Tipo { get; set; }
         public List<LinkMidia> LinkMidia { get; set; }
+        public List<RegistroAtividade> RegistroAtividade { get; set; }
+        
     }
 }
