@@ -4,17 +4,17 @@ using backend_squad1.Services;
 namespace backend_squad1.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class IniciarChamadoController : ControllerBase
+    [Route("/acaoChamado")]
+    public class AcaoChamadoController : ControllerBase
     {
         private readonly ChamadoService chamadoService;
 
-        public IniciarChamadoController(ChamadoService chamadoService)
+        public AcaoChamadoController(ChamadoService chamadoService)
         {
             this.chamadoService = chamadoService;
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("iniciarChamado/{id}")]
         public IActionResult MarcarChamadoEmAndamento(int id)
         {
             try
@@ -27,6 +27,27 @@ namespace backend_squad1.Controllers
                 else
                 {
                     return BadRequest("O chamado já está Em andamento.");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("finalizarChamado/{id}")]
+        public IActionResult MarcarChamadoFinalizado(int id)
+        {
+            try
+            {
+                bool success = chamadoService.MarcarChamadoFinalizado(id);
+                if (success)
+                {
+                    return Ok("Chamado marcado como Finalizado.");
+                }
+                else
+                {
+                    return BadRequest("O chamado já está Finalizado.");
                 }
             }
             catch (System.Exception ex)
