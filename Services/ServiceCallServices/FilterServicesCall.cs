@@ -27,7 +27,7 @@ namespace backend_squad1.Services
             string query = "SELECT c.*, m.idMidia, m.linkMidia, m.tipoMidia FROM Chamado c LEFT JOIN Midia m ON c.idChamado = m.Chamado_idChamado WHERE c.Empregado_Matricula = @matricula";
             if (!string.IsNullOrEmpty(parametro))
             {
-                query += " AND (LOWER(c.nome) LIKE @parametro OR LOWER(c.descricao) LIKE @parametro OR LOWER(c.prioridade) LIKE @parametro OR LOWER(c.status) LIKE @parametro OR LOWER(c.tipo) LIKE @parametro)";
+                query += " AND (LOWER(c.nome) LIKE @parametro OR LOWER(c.descricao) LIKE @parametro OR LOWER(c.prioridade) LIKE @parametro OR LOWER(c.status) LIKE @parametro OR LOWER(c.tipo) LIKE @parametro OR CAST(c.idChamado AS CHAR) LIKE @parametro)";
                 command.Parameters.AddWithValue("@parametro", "%" + parametro.ToLower() + "%");
             }
             command.Parameters.AddWithValue("@matricula", matricula);
