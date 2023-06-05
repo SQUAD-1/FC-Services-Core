@@ -49,27 +49,27 @@ namespace backend_squad1.Services
         {
             if (tipo == "Falta de material")
             {
-                return "Prioridade";
+                return "Média";
             }
             else if (tipo == "Problema com a internet")
             {
-                return "Internet Prioridade";
+                return "Alta";
             }
             else if (tipo == "Solicitação de limpeza")
             {
-                return "Limpeza Prioridade";
+                return "Baixa";
             }
             else if (tipo == "Solicitação de recurso")
             {
-                return "Recurso Prioridade";
+                return "Média";
             }
             else if (tipo == "Objeto perdido")
             {
-                return "Objeto Perdido Prioridade";
+                return "Média";
             }
             else
             {
-                return "Prioridade";
+                return "Média";
             }
         }
     }
