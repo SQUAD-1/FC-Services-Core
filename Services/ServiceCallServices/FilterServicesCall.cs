@@ -14,21 +14,21 @@ namespace backend_squad1.Services
             _databaseConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<ConsultaChamado> GetChamadosPorFiltro(int matricula, string nome)
+        public List<ConsultaChamado> GetChamadosPorFiltro(int matricula, string parametro)
         {
-            if (string.IsNullOrEmpty(nome))
+            if (string.IsNullOrEmpty(parametro))
             {
-                nome = null;
+                parametro = null;
             }
 
             MySqlConnection connection = new MySqlConnection(_databaseConnectionString);
             MySqlCommand command = connection.CreateCommand();
 
             string query = "SELECT c.*, m.idMidia, m.linkMidia, m.tipoMidia FROM Chamado c LEFT JOIN Midia m ON c.idChamado = m.Chamado_idChamado WHERE c.Empregado_Matricula = @matricula";
-            if (!string.IsNullOrEmpty(nome))
+            if (!string.IsNullOrEmpty(parametro))
             {
-                query += " AND c.Nome LIKE @nome";
-                command.Parameters.AddWithValue("@nome", "%" + nome + "%");
+                query += " AND (LOWER(c.nome) LIKE @parametro OR LOWER(c.descricao) LIKE @parametro OR LOWER(c.prioridade) LIKE @parametro OR LOWER(c.status) LIKE @parametro OR LOWER(c.tipo) LIKE @parametro)";
+                command.Parameters.AddWithValue("@parametro", "%" + parametro.ToLower() + "%");
             }
             command.Parameters.AddWithValue("@matricula", matricula);
             command.CommandText = query;
